@@ -20,5 +20,6 @@
 
 
 ## шРаргалки
-- [Че зА пРиКоL](https://flask.palletsprojects.com/en/1.1.x/tutorial/database/)
-- [Че зА пРиКоLL](https://flask.palletsprojects.com/en/1.1.x/patterns/sqlite3/)
+- [Че зА пРиКоL](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
+- [Че зА пРиКоLL](https://flask.palletsprojects.com/en/1.1.x/tutorial/database/)
+- [Че зА пРиКоLLL](https://flask.palletsprojects.com/en/1.1.x/patterns/sqlite3/)
