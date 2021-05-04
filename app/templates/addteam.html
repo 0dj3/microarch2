@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <title>Добавление команды</title>
+    </head>
+    <body>
+        <form action="{{ url_for('addTeam')}}" method="post"> 
+            <h1>Введите данные команды</h1>
+            <input class="form-control" type="text" name="teamname" placeholder="Введите название команды"><br>
+            <input class="form-control" type="text" name="homecity" placeholder="Домашний город"><br>
+            <input class="form-control" type="text" name="sponsors" placeholder="Спонсоры"><br>
+            <button class="btn btn-primary">Добавить</button><br><br>
+        </form>
+        <form action="{{ url_for('index')}}">
+            <button class="btn btn-primary">Назад</button>
+        </form>
+    </body>
+</html>

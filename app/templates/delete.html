@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <title>Удаление</title>
+    </head>
+    <body>
+        <form action="{{ url_for('delPlayer')}}" method="POST"> 
+            <h1>Удаление игрока</h1>
+            <input class="form-control" type="text" name="idplayer" placeholder="Введите id игрока"><br>
+            <button  class="btn btn-primary">Удалить игрока</button><br><br>
+        </form>
+        <form action="{{ url_for('delTeam')}}" method="POST">
+            <h1>Удаление команды</h1>
+            <input class="form-control" type="text" name="idteam" placeholder="Введите id команды"><br>
+            <button class="btn btn-primary">Удалить команду</button><br><br>
+        </form>
+        <form action="{{ url_for('index')}}">
+            <button class="btn btn-primary">Назад</button>
+        </form>
+    </body>
+</html>
