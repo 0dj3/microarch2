@@ -1,6 +1,9 @@
-from flask import Flask, render_template, request
-from sqlalchemy import create_engine
+from flask import Flask, render_template, request, jsonify
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
+from json import dumps
+import json
+import psycopg2
 
 app = Flask(__name__)
 
@@ -10,71 +13,87 @@ app = Flask(__name__)
 
 engine = create_engine("postgresql://postgres:1908@localhost/microarch")
 db = scoped_session(sessionmaker(bind=engine))
+Session = sessionmaker(bind=engine)
+session = Session()
 
 app.secret_key = 'microarch-lab2'
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 
 ###########################################
-#--------Переходы между страницами--------#
-###########################################
-
-@app.route('/')
-def index():
-    return render_template("index.html")
-
-@app.route('/addteam')
-def teams():
-    return render_template("addteam.html")
-
-@app.route('/addplayer')
-def players():
-    return render_template("addplayer.html")
-    
-@app.route('/delete')
-def delete():
-    return render_template("delete.html")
-
-###########################################
 #-----------------Функции-----------------#
 ###########################################
 
-@app.route('/addplayer', methods=['POST']) # Добавление игрока
-def addPlayer():
-    firstname = request.form.get("firstname")
-    secondname = request.form.get("secondname")
-    patronname = request.form.get("patronname")
-    birthdate = request.form.get("birthdate")
-    teamname = request.form.get("teamname")
+# CREATE Добавление игрока
+@app.route('/addplayer/<string:firstname>/<string:secondname>/<string:patronname>/<string:birthdate>/<string:teamname>', methods=['POST'])
+def addPlayer(firstname,secondname,patronname,birthdate,teamname):
     db.execute("INSERT INTO players (firstname, secondname, patronname, birthdate, teamname) VALUES (:firstname, :secondname, :patronname, cast(:birthdate as date), :teamname)",
             {"firstname":firstname, "secondname":secondname, "patronname":patronname, "birthdate":birthdate, "teamname":teamname})
     db.commit()
-    return render_template("addplayer.html") 
+    return "Success: firstname = " + str(firstname) + ", secondname = " + str(secondname) + ", patronname = "  + str(patronname) + ", birthdate = "  + str(birthdate) + ", teamname = "  + str(teamname) 
 
-@app.route('/addteam', methods=['POST']) # Добавление команды  
-def addTeam():
-    teamname = request.form.get("teamname")
-    homecity = request.form.get("homecity")
-    sponsors = request.form.get("sponsors")
+# CREATE Добавление команды  
+@app.route('/addteam/<string:teamname>/<string:homecity>/<string:sponsors>', methods=['POST']) 
+def addTeam(teamname,homecity,sponsors):
     db.execute("INSERT INTO teams (teamname,homecity,sponsors) VALUES (:teamname,:homecity,:sponsors)", 
             {"teamname":teamname, "homecity":homecity, "sponsors":sponsors})
     db.commit()
-    return render_template("addteam.html")
+    return "Success: teamname = " + str(teamname) + ", homecity = " + str(homecity) + ", sponsors = "  + str(sponsors)
 
-@app.route('/delete', methods=['POST']) # DELETE Удаление игрока
-def delPlayer():
-    idplayer = request.form.get("idplayer")
+# READ Возвращение команды по id 
+@app.route('/getteam/<int:teamid>', methods=['GET'])
+def getTeam(teamid):
+    result = db.execute("SELECT * FROM teams WHERE teamid = " + str(teamid))
+    return json.dumps([dict(r) for r in result], default=str)
+
+# READ Возвращение всех команд
+@app.route('/getteams', methods=['GET'])
+def getTeams():
+    result = db.execute("SELECT * FROM teams")
+    return json.dumps([dict(r) for r in result], default=str)
+
+# READ Возвращение игрока по id 
+@app.route('/getplayer/<int:playerid>', methods=['GET'])
+def getPlayer(playerid):
+    result = db.execute("SELECT * FROM players WHERE playerid = " + str(playerid))
+    return json.dumps([dict(r) for r in result], default=str)
+
+# READ Возвращение всех игроков 
+@app.route('/getplayers', methods=['GET'])
+def getPlayers():
+    result = db.execute("SELECT * FROM players")
+    return json.dumps([dict(r) for r in result], default=str)
+
+# PUT Изменение игрока
+@app.route('/editplayer/<int:playerid>/<string:firstname>/<string:secondname>/<string:patronname>/<string:birthdate>/<string:teamname>', methods=['PUT'])
+def editPlayer(playerid, firstname,secondname,patronname,birthdate,teamname):
+    db.execute("UPDATE players SET firstname = :firstname, secondname = :secondname, patronname = :patronname, birthdate = :birthdate, teamname = :teamname WHERE playerid = :playerid",
+            {"playerid": playerid,"firstname":firstname, "secondname":secondname, "patronname":patronname, "birthdate":birthdate, "teamname":teamname})
+    db.commit()
+    return "Success: player with id = " + str(playerid) + "updated to firstname = " + str(firstname) + ", secondname = " + str(secondname) + ", patronname = "  + str(patronname) + ", birthdate = "  + str(birthdate) + ", teamname = "  + str(teamname) 
+
+# PUT Изменение команды
+@app.route('/editteam/<int:teamid>/<string:teamname>/<string:homecity>/<string:sponsors>', methods=['PUT']) 
+def editTeam(teamid,teamname,homecity,sponsors):
+    db.execute("UPDATE teams SET teamname = :teamname, homecity = :homecity, sponsors = :sponsors WHERE teamid = :teamid", 
+            {"teamid":teamid, "teamname":teamname, "homecity":homecity, "sponsors":sponsors})
+    db.commit()
+    return "Success:  team with id = " + str(teamid) + " updated to teamname = " + str(teamname) + ", homecity = " + str(homecity) + ", sponsors = "  + str(sponsors)
+
+
+# DELETE Удаление игрока
+@app.route('/deleteplayer/<int:idplayer>', methods=['DELETE']) 
+def delPlayer(idplayer):
     db.execute("DELETE FROM players WHERE playerid = (:idplayer)", {"idplayer":idplayer})
     db.commit()
-    return render_template("delete.html")
+    return "Success: player with id=" + str(idplayer) + " was deleted."
 
-
-@app.route('/delete', methods=['POST']) # DELETE Удаление команды
-def delTeam():
-    idteam = request.form.get("idteam")
+# DELETE Удаление команды
+@app.route('/deleteteam/<int:idteam>', methods=['DELETE']) 
+def delTeam(idteam):
     db.execute("DELETE FROM teams WHERE teamid = (:idteam)", {"idteam":idteam})
-    db.commit()
-    return render_template("delete.html")
+    db.commit() 
+    return "Success: team with id=" + str(idteam) + " was deleted."
 
 if __name__ == "__main__":
     app.run(debug=True)
