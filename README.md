@@ -7,6 +7,7 @@
 - [Тема и задания](#theme)
 - [Источники](#source)
 - [Инструкция](#instruction)
+- [Функции](#functions)
 
 <a name="theme"><h2>Тема: "Игроки и команды"</h2></a>
 Приложение должно хранить данные о игроках и их командах.
@@ -64,4 +65,65 @@ Cтраница функции и значение, которое оно при
   ```python
   @app.route('/getplayer/<int:playerid>', methods=['GET'])
   ```
-   В постмане выбираете метод GET, т.к. данная страница принимает метод GET и отправляете запрос ```http://127.0.0.1:5000/getteamplayers/13```
+10) В постмане выбираете метод GET, т.к. данная страница принимает метод GET и отправляете запрос ```http://127.0.0.1:5000/getteamplayers/13```
+
+<a name="functions"><h2>Функции/Запросы для Postman</h2></a>
+### POST
+- Добавление игрока в таблицу
+```python
+http://127.0.0.1:5000/addplayer/<string:firstname>/<string:secondname>/<string:patronname>/<string:birthdate>/<string:teamname>
+```
+- Добавление команды в таблицу
+```python
+http://127.0.0.1:5000/addteam/<string:teamname>/<string:homecity>/<string:sponsors>
+```
+### GET
+- Возвращение игрока по id
+```python
+http://127.0.0.1:5000/getplayer/<int:playerid>
+```
+- Возвращение всех игроков
+```python
+http://127.0.0.1:5000/getplayers
+```
+- Возвращение игрока по id с атрибутами его команды
+```python
+http://127.0.0.1:5000/getplayerteam/<int:idplayer>
+```
+- Возвращение команды по id
+```python
+http://127.0.0.1:5000/getteam/<int:teamid>
+```
+- Возвращение всех команд
+```python
+http://127.0.0.1:5000/getteams
+```
+- Возвращение команды по id с атрибутами всех игроков в команде
+```python
+http://127.0.0.1:5000/getteamplayers/<int:idteam>
+```
+### PUT
+- Редактирование игрока по id
+```python
+http://127.0.0.1:5000/editplayer/<int:playerid>/<string:firstname>/<string:secondname>/<string:patronname>/<string:birthdate>/<string:teamname>
+```
+- Редактирование команды по id
+```python
+http://127.0.0.1:5000/editteam/<int:teamid>/<string:teamname>/<string:homecity>/<string:sponsors>
+```
+### DELETE
+- Удаление игрока из таблицы по id
+```python
+http://127.0.0.1:5000/deleteplayer/<int:idplayer>
+```
+- Удаление команды из таблицы по id
+```python
+http://127.0.0.1:5000/deleteteam/<int:idteam>
+```
+
+
+
+
+
+
+  
