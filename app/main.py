@@ -91,9 +91,25 @@ def delPlayer(idplayer):
 # DELETE Удаление команды
 @app.route('/deleteteam/<int:idteam>', methods=['DELETE']) 
 def delTeam(idteam):
-    db.execute("DELETE FROM teams WHERE teamid = (:idteam)", {"idteam":idteam})
+    db.execute("DELETE FROM teams WHERE teamid = (:idteam)", 
+            {"idteam":idteam})
     db.commit() 
     return "Success: team with id=" + str(idteam) + " was deleted."
+
+# GET Возвращение команды и его игроков 
+@app.route('/getplayerteam/<int:idplayer>', methods=['GET'])
+def getPlayerTeam(idplayer):
+    result = db.execute("SELECT p.*, t.* FROM players p RIGHT JOIN teams t ON p.teamName = t.teamName WHERE p.playerid = :idplayer",
+            {"idplayer":idplayer})
+    return json.dumps([dict(r) for r in result], default=str)
+
+# GET Возвращение игрока и команды, в котороый он состоит 
+@app.route('/getteamplayers/<int:idteam>', methods=['GET'])
+def getTeamPlayers(idteam):
+    result = db.execute("SELECT t.teamName, t.homecity, t.sponsors, json_agg(json_build_object('firstName', p.firstname, 'secondName', p.secondname, 'patronName', p.patronname, 'birthDate', p.birthdate)) AS players FROM teams t RIGHT JOIN players p ON p.teamName = t.teamName WHERE t.teamid = :idteam GROUP BY t.teamName, t.homecity, t.sponsors",
+            {"idteam":idteam})
+    res = json.dumps([dict(r) for r in result], default=str)
+    return res
 
 if __name__ == "__main__":
     app.run(debug=True)
