@@ -11,7 +11,7 @@ app = Flask(__name__)
 #--------Подключение к базе данных--------#
 ###########################################
 
-engine = create_engine("postgresql://postgres:1908@localhost/microarch")
+engine = create_engine("postgresql://username:password@localhost/foldername")
 db = scoped_session(sessionmaker(bind=engine))
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -96,14 +96,14 @@ def delTeam(idteam):
     db.commit() 
     return "Success: team with id=" + str(idteam) + " was deleted."
 
-# GET Возвращение команды и его игроков 
+# GET Возвращение игрока и команды, в котороый он состоит 
 @app.route('/getplayerteam/<int:idplayer>', methods=['GET'])
 def getPlayerTeam(idplayer):
     result = db.execute("SELECT p.*, t.* FROM players p RIGHT JOIN teams t ON p.teamName = t.teamName WHERE p.playerid = :idplayer",
             {"idplayer":idplayer})
     return json.dumps([dict(r) for r in result], default=str)
 
-# GET Возвращение игрока и команды, в котороый он состоит 
+# GET Возвращение команды и его игроков 
 @app.route('/getteamplayers/<int:idteam>', methods=['GET'])
 def getTeamPlayers(idteam):
     result = db.execute("SELECT t.teamName, t.homecity, t.sponsors, json_agg(json_build_object('firstName', p.firstname, 'secondName', p.secondname, 'patronName', p.patronname, 'birthDate', p.birthdate)) AS players FROM teams t RIGHT JOIN players p ON p.teamName = t.teamName WHERE t.teamid = :idteam GROUP BY t.teamName, t.homecity, t.sponsors",
