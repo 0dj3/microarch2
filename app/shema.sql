@@ -15,5 +15,5 @@ CREATE TABLE players (
   patronName TEXT NOT NULL,
   birthDate DATE NOT NULL,
   teamName TEXT NOT NULL,
-  FOREIGN KEY (teamName) REFERENCES teams (teamName)
+  FOREIGN KEY (teamName) REFERENCES teams (teamName) ON DELETE CASCADE ON UPDATE CASCADE
 );
