@@ -31,41 +31,41 @@
 - [Flask: Using SQLite 3 with Flask](https://flask.palletsprojects.com/en/1.1.x/patterns/sqlite3/)
 
 <a name="instruction"><h2>Инструкция</h2></a>
-1) Открыть консоль в папке и прописать ```python -m venv venv```, будет создана папка "venv"
-2) Активировать venv через команду ```venv\scripts\activate```. В консоли должна появиться "(venv)"
-3) Установить зависимости из "requirements.txt" командой ```pip install -r requirements.txt``` или каждую вручную ```pip install <название библиотеки>```
-4) Скачать pgAdmin4 - это postgresql и настроить свою базу<br>
-	4.1. Пример БД лежит в файле "shema.sql"<br>
-	4.2. Расписать данные под postgresql<br>
+1) Открыть консоль в папке и прописать ```python -m venv venv```, будет создана папка _"venv"_
+2) Активировать venv через команду ```venv\scripts\activate```. В консоли должна появиться _"(venv)"_
+3) Установить зависимости из _"requirements.txt"_ командой ```pip install -r requirements.txt``` или каждую вручную ```pip install <название библиотеки>```
+4) Скачать _**pgAdmin4**_ (это _**postgresql**_) и настроить свою базу<br>
+	4.1. Пример БД лежит в файле _"shema.sql"_<br>
+	4.2. Расписать данные под _**postgresql**_<br>
 	4.3. Настроить внешний ключ по заданию. Пример:
 ```javascript
 FOREIGN KEY (teamName) REFERENCES teams (teamName) ON DELETE CASCADE ON UPDATE CASCADE
 ```
-  - первый "teamName" относится к players
-  - второй "teamName" относится к таблице "teams"
+  - первый _"teamName"_ относится к ```players```
+  - второй _"teamName"_ относится к таблице ```teams```
   - ```ON DELETE CASCADE``` при удалении команды удаляет игроков 
-  - ```ON UPDATE CASCADE``` при редактировании команды изменяет поле "teamName" у игроков
+  - ```ON UPDATE CASCADE``` при редактировании команды изменяет поле _"teamName"_ у игроков
   
-5) Открыть "main.py" и изменить 14-ю строку. 
+5) Открыть _"main.py"_ и изменить 14-ю строку. 
   ```javascript
   engine = create_engine("postgresql://username:password@localhost/foldername")
   ```
-  - ```username``` = имя пользователя pgAdmina 
-  - ```password``` = пароль от pgAdmina
+  - ```username``` = имя пользователя _**pgAdmin**_
+  - ```password``` = пароль от _**pgAdmin**_
   - ```localhost``` = менять, если у вас хост другой
-  - ```foldername``` = название папки с проектом, в этом случае будет папка "app"
+  - ```foldername``` = название папки с проектом, в этом случае будет папка _"app"_
 
-6) Скачать Postman для проверки запросов.
-7) Запустить программу с помощью ```py main.py``` ("main.py" название исполняемого файла)
+6) Скачать _**Postman**_ для проверки запросов.
+7) Запустить программу с помощью ```py main.py``` (_"main.py"_ название исполняемого файла)
      Должен показать что-то вроде ```Running on http://127.0.0.1:5000/```
 
-8) Если всё получилось, то заходите в Postman и создаёте вкладку для запросов.
+8) Если всё получилось, то заходите в _**Postman**_ и создаёте вкладку для запросов.
 9) Пример (Если данных не будет, то он ничего не вернёт):<br>
 Cтраница функции и значение, которое оно принимает
   ```python
   @app.route('/getplayer/<int:playerid>', methods=['GET'])
   ```
-10) В постмане выбираете метод GET, т.к. данная страница принимает метод GET и отправляете запрос ```http://127.0.0.1:5000/getteamplayers/13```
+10) В _**Postman**_ выбираете метод **GET**, т.к. данная страница принимает метод **GET** и отправляете запрос ```http://127.0.0.1:5000/getteamplayers/13```
 
 <a name="functions"><h2>Функции / Запросы для Postman</h2></a>
 ### POST
