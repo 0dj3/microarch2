@@ -11,7 +11,7 @@ app = Flask(__name__)
 #--------Подключение к базе данных--------#
 ###########################################
 
-engine = create_engine("postgresql://username:password@localhost/foldername")
+engine = create_engine("postgresql://postgres:1908@localhost/microarch")
 db = scoped_session(sessionmaker(bind=engine))
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -25,16 +25,26 @@ app.config["SESSION_TYPE"] = "filesystem"
 ###########################################
 
 # CREATE Добавление игрока
-@app.route('/addplayer/<string:firstname>/<string:secondname>/<string:patronname>/<string:birthdate>/<string:teamname>', methods=['POST'])
-def addPlayer(firstname,secondname,patronname,birthdate,teamname):
+@app.route('/addplayer', methods=['POST'])
+def addPlayer():
+    request_json = request.get_json()
+    firstname = request_json.get('firstname')
+    secondname = request_json.get('secondname')
+    patronname = request_json.get('secondname')
+    birthdate = request_json.get('birthdate')
+    teamname = request_json.get('teamname')
     db.execute("INSERT INTO players (firstname, secondname, patronname, birthdate, teamname) VALUES (:firstname, :secondname, :patronname, cast(:birthdate as date), :teamname)",
             {"firstname":firstname, "secondname":secondname, "patronname":patronname, "birthdate":birthdate, "teamname":teamname})
     db.commit()
     return "Success: firstname = " + str(firstname) + ", secondname = " + str(secondname) + ", patronname = "  + str(patronname) + ", birthdate = "  + str(birthdate) + ", teamname = "  + str(teamname) 
 
 # CREATE Добавление команды  
-@app.route('/addteam/<string:teamname>/<string:homecity>/<string:sponsors>', methods=['POST']) 
-def addTeam(teamname,homecity,sponsors):
+@app.route('/addteam', methods=['POST']) 
+def addTeam():
+    request_json = request.get_json()
+    teamname = request_json.get('teamname')
+    homecity = request_json.get('homecity')
+    sponsors = request_json.get('sponsors')
     db.execute("INSERT INTO teams (teamname,homecity,sponsors) VALUES (:teamname,:homecity,:sponsors)", 
             {"teamname":teamname, "homecity":homecity, "sponsors":sponsors})
     db.commit()
@@ -65,16 +75,28 @@ def getPlayers():
     return json.dumps([dict(r) for r in result], default=str)
 
 # PUT Изменение игрока
-@app.route('/editplayer/<int:playerid>/<string:firstname>/<string:secondname>/<string:patronname>/<string:birthdate>/<string:teamname>', methods=['PUT'])
-def editPlayer(playerid, firstname,secondname,patronname,birthdate,teamname):
+@app.route('/editplayer', methods=['PUT'])
+def editPlayer():
+    request_json = request.get_json()
+    playerid = request_json.get('playerid')
+    firstname = request_json.get('firstname')
+    secondname = request_json.get('secondname')
+    patronname = request_json.get('patronname')
+    birthdate = request_json.get('birthdate')
+    teamname = request_json.get('teamname')
     db.execute("UPDATE players SET firstname = :firstname, secondname = :secondname, patronname = :patronname, birthdate = :birthdate, teamname = :teamname WHERE playerid = :playerid",
             {"playerid": playerid,"firstname":firstname, "secondname":secondname, "patronname":patronname, "birthdate":birthdate, "teamname":teamname})
     db.commit()
     return "Success: player with id = " + str(playerid) + "updated to firstname = " + str(firstname) + ", secondname = " + str(secondname) + ", patronname = "  + str(patronname) + ", birthdate = "  + str(birthdate) + ", teamname = "  + str(teamname) 
 
 # PUT Изменение команды
-@app.route('/editteam/<int:teamid>/<string:teamname>/<string:homecity>/<string:sponsors>', methods=['PUT']) 
-def editTeam(teamid,teamname,homecity,sponsors):
+@app.route('/editteam', methods=['PUT']) 
+def editTeam():
+    request_json = request.get_json()
+    teamid = request_json.get('teamid')
+    teamname = request_json.get('teamname')
+    homecity = request_json.get('homecity')
+    sponsors = request_json.get('sponsors')
     db.execute("UPDATE teams SET teamname = :teamname, homecity = :homecity, sponsors = :sponsors WHERE teamid = :teamid", 
             {"teamid":teamid, "teamname":teamname, "homecity":homecity, "sponsors":sponsors})
     db.commit()
@@ -96,14 +118,14 @@ def delTeam(idteam):
     db.commit() 
     return "Success: team with id=" + str(idteam) + " was deleted."
 
-# GET Возвращение игрока и команды, в котороый он состоит 
+# GET Возвращение команды и его игроков 
 @app.route('/getplayerteam/<int:idplayer>', methods=['GET'])
 def getPlayerTeam(idplayer):
     result = db.execute("SELECT p.*, t.* FROM players p RIGHT JOIN teams t ON p.teamName = t.teamName WHERE p.playerid = :idplayer",
             {"idplayer":idplayer})
     return json.dumps([dict(r) for r in result], default=str)
 
-# GET Возвращение команды и его игроков 
+# GET Возвращение игрока и команды, в котороый он состоит 
 @app.route('/getteamplayers/<int:idteam>', methods=['GET'])
 def getTeamPlayers(idteam):
     result = db.execute("SELECT t.teamName, t.homecity, t.sponsors, json_agg(json_build_object('firstName', p.firstname, 'secondName', p.secondname, 'patronName', p.patronname, 'birthDate', p.birthdate)) AS players FROM teams t RIGHT JOIN players p ON p.teamName = t.teamName WHERE t.teamid = :idteam GROUP BY t.teamName, t.homecity, t.sponsors",
