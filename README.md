@@ -74,11 +74,27 @@ http://127.0.0.1:5000/getteamplayers/13
 ### POST
 - Добавление игрока в таблицу
 ```python
-http://127.0.0.1:5000/addplayer/<string:firstname>/<string:secondname>/<string:patronname>/<string:birthdate>/<string:teamname>
+http://127.0.0.1:5000/addplayer
+```
+```javascript
+{
+    "firstname": "firstname",
+    "secondname": "secondname",
+    "patronname": "patronname",
+    "birthdate": "yyyy-mm-dd",
+    "teamname": "teamname"
+}
 ```
 - Добавление команды в таблицу
 ```python
-http://127.0.0.1:5000/addteam/<string:teamname>/<string:homecity>/<string:sponsors>
+http://127.0.0.1:5000/addteam
+```
+```javascript
+{
+    "teamname": "teamname", 
+    "homecity": "homecity", 
+    "sponsors": "sponsors"
+}
 ```
 ### GET
 - Возвращение игрока по id
@@ -108,11 +124,29 @@ http://127.0.0.1:5000/getteamplayers/<int:idteam>
 ### PUT
 - Редактирование игрока по id
 ```python
-http://127.0.0.1:5000/editplayer/<int:playerid>/<string:firstname>/<string:secondname>/<string:patronname>/<string:birthdate>/<string:teamname>
+http://127.0.0.1:5000/editplayer
+```
+```javascript
+{
+    "playerid": 1,
+    "firstname": "firstname",
+    "secondname": "secondname",
+    "patronname": "patronname",
+    "birthdate": "yyyy-mm-dd",
+    "teamname": "teamname"
+}
 ```
 - Редактирование команды по id
 ```python
-http://127.0.0.1:5000/editteam/<int:teamid>/<string:teamname>/<string:homecity>/<string:sponsors>
+http://127.0.0.1:5000/editteam
+```
+```javascript
+{
+    "teamid": 1,
+    "teamname": "teamname", 
+    "homecity": "homecity", 
+    "sponsors": "sponsors"
+}
 ```
 ### DELETE
 - Удаление игрока из таблицы по id
