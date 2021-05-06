@@ -32,8 +32,8 @@
 
 <a name="instruction"><h2>Инструкция</h2></a>
 1) Открыть консоль в папке и прописать ```python -m venv venv```, будет создана папка _"venv"_
-2) Активировать venv через команду ```venv\scripts\activate```. В консоли должна появиться _"(venv)"_
-3) Установить зависимости из _"requirements.txt"_ командой ```pip install -r requirements.txt``` или каждую вручную ```pip install <название библиотеки>```
+2) Активировать _**venv**_ через команду ```venv\scripts\activate```. В консоли должна появиться _"(venv)"_
+3) Установить библиотеки из _"requirements.txt"_ командой ```pip install -r requirements.txt``` или каждую вручную ```pip install <название библиотеки>```
 4) Скачать _**pgAdmin4**_ (это _**postgresql**_) и настроить свою базу<br>
 	4.1. Пример БД лежит в файле _"shema.sql"_<br>
 	4.2. Расписать данные под _**postgresql**_<br>
